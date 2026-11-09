@@ -1,0 +1,94 @@
+# Publishes this package to npm with a provenance statement when a vX.Y.Z tag
+# is pushed.
+#
+# TRUST MODEL
+#
+# - No npm token exists. The job authenticates with npm Trusted Publishing
+#   (OIDC). The Trusted Publisher is pinned to exactly this file name and the
+#   `npm-publish` Environment; renaming either breaks publishing.
+# - `registry-url` must never be set on setup-node, and `NODE_AUTH_TOKEN` must
+#   never be set: either takes precedence over OIDC.
+# - `npm run release` is safe in CI: when GITHUB_ACTIONS is set, `n8n-node
+#   release` only lints, builds and runs `npm publish` with provenance. Never run
+#   it locally, where it would push a bump commit straight to main. See
+#   "Releasing" in the README.
+
+name: Publish
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'
+
+permissions: {}
+
+concurrency:
+  group: npm-publish
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    name: Publish to npm
+    # npm Trusted Publishing only accepts GitHub-hosted runners.
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment: npm-publish
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Check out code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          # Full history and branches, for the ancestor check below.
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
+        with:
+          node-version: '24.16.0'
+          package-manager-cache: false
+
+      - name: Require npm 11.5.1 or newer
+        run: |
+          set -euo pipefail
+          NPM_VERSION="$(npm --version)"
+          # The single-quoted script is JavaScript; ${version} is not for the shell.
+          # shellcheck disable=SC2016
+          node -e '
+            const version = process.argv[1];
+            const [major, minor, patch] = version.split(".").map((part) => parseInt(part, 10));
+            const supported = major > 11 || (major === 11 && (minor > 5 || (minor === 5 && patch >= 1)));
+            if (!supported) {
+              console.error(`::error::npm ${version} is older than 11.5.1, which trusted publishing requires`);
+              process.exit(1);
+            }
+          ' "$NPM_VERSION"
+
+      - name: Require the tag to match package.json and be on main
+        env:
+          TAG: ${{ github.ref_name }}
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "v$VERSION" ]; then
+            echo "::error::Tag $TAG does not match package.json version v$VERSION"
+            exit 1
+          fi
+          if ! git merge-base --is-ancestor "$GITHUB_SHA" origin/main; then
+            echo "::error::Tag $TAG is not an ancestor of origin/main"
+            exit 1
+          fi
+
+      # Dependency install scripts must not run in a job that can mint an OIDC token.
+      - name: Install dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Run tests
+        run: npm test
+
+      - name: Publish
+        # Lints, builds and publishes with provenance.
+        run: npm run release

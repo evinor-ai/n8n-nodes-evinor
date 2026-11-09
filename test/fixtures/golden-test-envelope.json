@@ -1,0 +1,144 @@
+{
+  "secret": "golden-fixture-secret-do-not-rotate-without-regen",
+  "keyId": "rule-golden:test:test-delivery-golden-1",
+  "clock": "2026-04-01T12:00:00.000Z",
+  "input": {
+    "deliveryId": "test-delivery-golden-1",
+    "attemptCount": 0,
+    "subjectId": "test-delivery-golden-1",
+    "idempotencyKey": "test-delivery-golden-1",
+    "recipients": {
+      "kind": "incident-rule-test",
+      "ruleId": "rule-golden"
+    },
+    "payload": {
+      "eventType": "tpl-layoff",
+      "eventCodeName": "LAYOFF",
+      "occurredAt": "2026-04-01T11:55:00.000Z",
+      "externalEventId": "incident-golden-1",
+      "details": {
+        "incidentId": "incident-golden-1",
+        "incidentReportId": "report-golden-1",
+        "templateId": "tpl-layoff",
+        "templateCodeName": "LAYOFF",
+        "templateDisplayName": "Layoffs",
+        "matchedAt": "2026-04-01T12:00:00.000Z",
+        "matchingReportCount": 2,
+        "reportingOutlets": [
+          {
+            "id": "outlet-1",
+            "name": "Acme News"
+          },
+          {
+            "id": "outlet-2"
+          }
+        ],
+        "roles": [
+          {
+            "code": "COMPANY_NAME",
+            "textValue": "TechCorp",
+            "namedEntityId": "ne-techcorp"
+          },
+          {
+            "code": "AFFECTED_EMPLOYEES_COUNT",
+            "textValue": "200 people",
+            "parsedAmount": 200
+          }
+        ],
+        "generatedSentence": "TechCorp laid off 200 people.",
+        "coverImageUrl": "https://cdn.example.com/cover.jpg",
+        "triggerText": "TechCorp announced layoffs",
+        "summaryText": "TechCorp announced layoffs of 200 employees.",
+        "tags": {
+          "temporal": "recent",
+          "articleRelationship": "subject"
+        }
+      }
+    },
+    "provenance": [
+      {
+        "sourceKind": "external",
+        "sourceId": "outlet-1",
+        "sourceName": "Acme News"
+      },
+      {
+        "sourceKind": "external",
+        "sourceId": "outlet-2"
+      }
+    ]
+  },
+  "envelope": {
+    "protocolVersion": "0.1",
+    "plane": "data",
+    "messageId": "6c4d2fc1-851d-7a58-991e-e4ed7baaa95c",
+    "type": "incident",
+    "subjectId": "test-delivery-golden-1",
+    "idempotencyKey": "test-delivery-golden-1",
+    "sender": {
+      "agentId": "evinor-incident-rules",
+      "keyId": "rule-golden:test:test-delivery-golden-1",
+      "signatureAlg": "hmac-sha256",
+      "signature": "mtZSPycRWB66Y49UTM022cUoRn09jM3StRPtcdEnlJY="
+    },
+    "recipients": {
+      "kind": "incident-rule-test",
+      "ruleId": "rule-golden"
+    },
+    "timestamp": "2026-04-01T12:00:00.000Z",
+    "payload": {
+      "eventType": "tpl-layoff",
+      "eventCodeName": "LAYOFF",
+      "occurredAt": "2026-04-01T11:55:00.000Z",
+      "externalEventId": "incident-golden-1",
+      "details": {
+        "incidentId": "incident-golden-1",
+        "incidentReportId": "report-golden-1",
+        "templateId": "tpl-layoff",
+        "templateCodeName": "LAYOFF",
+        "templateDisplayName": "Layoffs",
+        "matchedAt": "2026-04-01T12:00:00.000Z",
+        "matchingReportCount": 2,
+        "reportingOutlets": [
+          {
+            "id": "outlet-1",
+            "name": "Acme News"
+          },
+          {
+            "id": "outlet-2"
+          }
+        ],
+        "roles": [
+          {
+            "code": "COMPANY_NAME",
+            "textValue": "TechCorp",
+            "namedEntityId": "ne-techcorp"
+          },
+          {
+            "code": "AFFECTED_EMPLOYEES_COUNT",
+            "textValue": "200 people",
+            "parsedAmount": 200
+          }
+        ],
+        "generatedSentence": "TechCorp laid off 200 people.",
+        "coverImageUrl": "https://cdn.example.com/cover.jpg",
+        "triggerText": "TechCorp announced layoffs",
+        "summaryText": "TechCorp announced layoffs of 200 employees.",
+        "tags": {
+          "temporal": "recent",
+          "articleRelationship": "subject"
+        }
+      }
+    },
+    "provenance": [
+      {
+        "sourceKind": "external",
+        "sourceId": "outlet-1",
+        "sourceName": "Acme News"
+      },
+      {
+        "sourceKind": "external",
+        "sourceId": "outlet-2"
+      }
+    ]
+  }
+}
