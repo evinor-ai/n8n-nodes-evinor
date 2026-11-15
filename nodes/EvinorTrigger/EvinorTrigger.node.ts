@@ -155,7 +155,7 @@ export class EvinorTrigger implements INodeType {
 				type: 'boolean',
 				default: false,
 				description:
-					'Whether to return only the event details, with roles flattened to code and value pairs',
+					'Whether to return the event details with roles flattened to code and value pairs, plus the event type, event date and event ID',
 			},
 		],
 	};

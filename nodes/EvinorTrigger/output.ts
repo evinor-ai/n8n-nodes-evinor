@@ -31,6 +31,21 @@ function pickParsedValues(role: IDataObject): IDataObject | undefined {
 	return Object.keys(parsed).length > 0 ? (parsed as IDataObject) : undefined;
 }
 
+/**
+ * Payload-level fields that Simplify keeps next to the details. `details` does
+ * not repeat them: `eventCodeName` is the event type, `eventDate` is when the
+ * event happened (with its precision), and `externalEventId` identifies the
+ * event across sensors. The deprecated `occurredAt` (the match time) is left
+ * out; `details.matchedAt` carries it.
+ */
+const EVENT_FIELDS = ['eventCodeName', 'eventDate', 'externalEventId'] as const;
+
+function pickEventFields(payload: IDataObject): IDataObject {
+	return Object.fromEntries(
+		EVENT_FIELDS.filter((key) => payload[key] !== undefined).map((key) => [key, payload[key]]),
+	) as IDataObject;
+}
+
 function simplifyDetails(details: IDataObject): IDataObject {
 	const rawRoles: unknown[] = Array.isArray(details.roles) ? details.roles : [];
 	const roles = rawRoles
@@ -55,7 +70,9 @@ function simplifyDetails(details: IDataObject): IDataObject {
  */
 export function mapEnvelopeToOutput(envelope: IDataObject, simplify: boolean): IDataObject {
 	const payload = asObject(envelope.payload);
-	const content = simplify ? simplifyDetails(asObject(payload.details)) : payload;
+	const content = simplify
+		? { ...simplifyDetails(asObject(payload.details)), ...pickEventFields(payload) }
+		: payload;
 
 	return {
 		...content,

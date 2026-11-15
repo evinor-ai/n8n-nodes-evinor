@@ -62,8 +62,9 @@ By default each item is the event's full `payload` plus three fields:
 | `idempotencyKey` | The same for every attempt of one delivery. Use it to deduplicate.           |
 | `isTest`         | `true` for a sample event from **Listen for test event**, otherwise `false`. |
 
-Turn on **Simplify** to get `payload.details` at the top level, with the same three fields and with
-roles flattened:
+Turn on **Simplify** to get `payload.details` at the top level, with roles flattened, the same three
+fields, and three fields kept from the payload: `eventCodeName`, `eventDate` (when the event
+happened, with its `precision` and `source`; omitted when no date is known) and `externalEventId`:
 
 ```json
 {
@@ -76,6 +77,9 @@ roles flattened:
 	"parsedValues": {
 		"AFFECTED_EMPLOYEES_COUNT": { "parsedAmount": 200 }
 	},
+	"eventCodeName": "LAYOFF",
+	"eventDate": { "value": "2026-04-01T00:00:00.000Z", "source": "STATED", "precision": "DAY" },
+	"externalEventId": "incident-golden-1",
 	"messageId": "4ba21e4c-e3a9-7684-ad83-5467af61a24f",
 	"idempotencyKey": "delivery-golden-1",
 	"isTest": false
