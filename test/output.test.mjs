@@ -102,9 +102,35 @@ describe('task 2.4: Simplify', () => {
 	it('returns payload.details at the top level, keeping the dedup fields', () => {
 		assert.equal(simplified.generatedSentence, envelope.payload.details.generatedSentence);
 		assert.equal(simplified.incidentId, envelope.payload.details.incidentId);
-		assert.equal(simplified.eventCodeName, undefined);
 		assert.equal(simplified.messageId, envelope.messageId);
 		assert.equal(simplified.idempotencyKey, envelope.idempotencyKey);
+	});
+
+	it('keeps the event type and event id from the payload', () => {
+		assert.equal(simplified.eventCodeName, envelope.payload.eventCodeName);
+		assert.equal(simplified.externalEventId, envelope.payload.externalEventId);
+	});
+
+	it('keeps eventDate with its precision and source', () => {
+		const eventDate = { value: '2026-03-01T00:00:00.000Z', source: 'STATED', precision: 'MONTH' };
+		const item = mapEnvelopeToOutput(
+			{ ...envelope, payload: { ...envelope.payload, eventDate } },
+			true,
+		);
+		assert.deepEqual(item.eventDate, eventDate);
+	});
+
+	it('omits event fields the payload does not carry', () => {
+		const item = mapEnvelopeToOutput({ ...envelope, payload: { details: {} } }, true);
+		assert.ok(!('eventDate' in item));
+		assert.ok(!('eventCodeName' in item));
+		assert.ok(!('externalEventId' in item));
+	});
+
+	it('drops the other payload-level fields', () => {
+		assert.equal(simplified.occurredAt, undefined);
+		assert.equal(simplified.eventType, undefined);
+		assert.equal(simplified.details, undefined);
 	});
 
 	it('keeps every value of a role code that repeats', () => {

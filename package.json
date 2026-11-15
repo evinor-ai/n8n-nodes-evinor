@@ -1,6 +1,6 @@
 {
   "name": "@evinor/n8n-nodes-evinor",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "n8n community node that triggers workflows from Evinor sensor events.",
   "license": "MIT",
   "homepage": "https://github.com/evinor-ai/n8n-nodes-evinor#readme",
